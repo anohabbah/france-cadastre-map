@@ -1,0 +1,11 @@
+export * from './batch.service';
+import { BatchService } from './batch.service';
+export * from './batch-async.service';
+import { BatchAsyncService } from './batch-async.service';
+export * from './get-capabilities.service';
+import { GetCapabilitiesService } from './get-capabilities.service';
+export * from './reverse.service';
+import { ReverseService } from './reverse.service';
+export * from './search.service';
+import { SearchService } from './search.service';
+export const APIS = [BatchService, BatchAsyncService, GetCapabilitiesService, ReverseService, SearchService];
