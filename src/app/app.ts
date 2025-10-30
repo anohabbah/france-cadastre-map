@@ -70,6 +70,12 @@ export class App {
     effect(() => {
       this.map()?.addControl(new MaplibreGeocoder(FrenchBanGeocoderApi, {
         showResultsWhileTyping: true,
+        render: item => `
+        <div>
+          <div class="font-medium">${item.place_name}</div>
+          <div class="text-xs text-gray-500">${item.text}</div>
+        </div>
+        `,
         maplibregl
       }), 'top-left')
     })
