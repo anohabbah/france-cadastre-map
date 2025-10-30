@@ -44,6 +44,9 @@ importers:
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
+      zod:
+        specifier: ^4.1.12
+        version: 4.1.12
     devDependencies:
       '@angular/build':
         specifier: ^21.0.0-next.9
@@ -3514,6 +3517,9 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
+  zod@4.1.12:
+    resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
+
 snapshots:
 
   '@algolia/abtesting@1.6.1':
@@ -6969,3 +6975,5 @@ snapshots:
       zod: 3.25.76
 
   zod@3.25.76: {}
+
+  zod@4.1.12: {}
