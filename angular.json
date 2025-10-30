@@ -27,7 +27,7 @@
             ],
             "styles": [
               "maplibre-gl/dist/maplibre-gl.css",
-              "@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css",
+              "src/maplibre-gl-geocoder.css",
               "src/azure-blue-theme.scss",
               "src/styles.css"
             ]
