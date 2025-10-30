@@ -1,14 +1,7 @@
-import {Component, computed, effect, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, inject, signal} from '@angular/core';
 import {EventData, NgxMapLibreGLModule} from '@maplibre/ngx-maplibre-gl';
 import vectorStyle from './styles/vector.json';
-import {
-  StyleSpecification,
-  Map,
-  FilterSpecification,
-  GeoJSONFeature,
-  MapMouseEvent,
-  MapGeoJSONFeature
-} from 'maplibre-gl';
+import {Map, MapGeoJSONFeature, MapMouseEvent, StyleSpecification} from 'maplibre-gl';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatAutocompleteModule, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {MatInputModule} from '@angular/material/input';
@@ -17,7 +10,7 @@ import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {debounceTime, distinctUntilChanged, filter, switchMap} from 'rxjs';
 import {Address} from '@lib/geocode';
-import * as maplibre_gl from 'maplibre-gl';
+import {MAT_SNACK_BAR_DATA, MatSnackBar} from '@angular/material/snack-bar';
 
 const zoomLevel = {
   street: 16,
@@ -37,14 +30,15 @@ const zoomLevel = {
 })
 export class App {
   private readonly searchAddress = inject(SearchAddress);
+  readonly snackbar = inject(MatSnackBar);
 
   readonly mapStyle = vectorStyle as StyleSpecification;
   readonly query = new FormControl<string>('', {nonNullable: true});
   readonly result = toSignal(
     this.query.valueChanges.pipe(
-      distinctUntilChanged(),
-      filter(query => query.length >= 3),
       debounceTime(400),
+      distinctUntilChanged(),
+      filter(query => query.trim().length > 2),
       switchMap(query => this.searchAddress.searchAddresses(query))
     ),
     {initialValue: []}
@@ -61,19 +55,19 @@ export class App {
   readonly displayPopup = computed(() => {
     if (this.hoveredInfo()) {
       const { id } = this.selectedParcelle() || {};
-      return id === this.hoveredInfo()?.feature.properties.id
+      return id !== this.hoveredInfo()?.feature.properties.id
     }
     return false
   })
 
   constructor() {
     effect(() => {
-      const { id } = this.selectedParcelle();
+      const { id } = this.selectedParcelle() || {};
       this.map?.setFilter('parcelle-highlighted', ['==', 'id', id || ''])
     });
   }
 
-  displayWith(address: Address): string {
+  protected displayWith(address: Address): string {
     return address.properties?.label ?? ''
   }
 
@@ -116,8 +110,37 @@ export class App {
     const { id } = this.selectedParcelle() || {};
     if (feature && id !== feature.properties["id"]) {
       this.selectedParcelle.set({...feature.properties})
+      this.snackbar.openFromComponent(SelectedParcelDetails, {
+        data: {
+          ...this.selectedParcelle(),
+          ...event.lngLat,
+        }
+      })
     } else {
       this.selectedParcelle.set(null)
     }
   }
+}
+
+@Component({
+  template: `
+    <div>
+      <div>
+        <b>Parcelle </b>
+        <span>{{selectedParcelle?.numero}}</span>
+      </div>
+      <div>
+        <b>Longitude </b>
+        <span>{{selectedParcelle?.lng}}</span>
+      </div>
+      <div>
+        <b>Latitude </b>
+        <span>{{selectedParcelle?.lat}}</span>
+      </div>
+    </div>
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+class SelectedParcelDetails {
+  readonly selectedParcelle = inject<any>(MAT_SNACK_BAR_DATA)
 }
