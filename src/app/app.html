@@ -5,11 +5,11 @@
   [center]="[2.213749, 46.227638]"
   [canvasContextAttributes]="{preserveDrawingBuffer: false}"
   [cursorStyle]="cursor()"
-  (mapLoad)="map = $event"
+  (mapLoad)="map.set($event)"
   (mapClick)="handleSelectParcelle($event)"
 >
   <mgl-control mglNavigation [showCompass]="false" />
-  <mgl-control mglGeolocate/>
+  <mgl-control mglGeolocate />
 
   @if (displayPopup()) {
     <mgl-popup
@@ -34,20 +34,20 @@
     (layerClick)="handleSelectParcelle($event)"
   />
 
-  <mgl-control position="top-left">
-    <div class="search-input bg-[var(--mat-sys-surface-container)] rounded shadow w-sm">
-      <mat-form-field class="w-full"  [appearance]="'outline'" [subscriptSizing]="'dynamic'">
-        <input type="text" [placeholder]="placeholder()" matInput [formControl]="query" [matAutocomplete]="auto" />
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayWith" (optionSelected)="handleSelection($event)">
-          @for (address of result(); track address.properties?.id) {
-            <mat-option [value]="address">
-              <span>{{address.properties?.label}}</span>
-              <br><small>{{address.properties?.context}}</small>
-            </mat-option>
-          }
-        </mat-autocomplete>
-      </mat-form-field>
-    </div>
-  </mgl-control>
+<!--  <mgl-control position="top-left">-->
+<!--    <div class="search-input bg-[var(&#45;&#45;mat-sys-surface-container)] rounded shadow w-sm">-->
+<!--      <mat-form-field class="w-full"  [appearance]="'outline'" [subscriptSizing]="'dynamic'">-->
+<!--        <input type="text" [placeholder]="placeholder()" matInput [formControl]="query" [matAutocomplete]="auto" />-->
+<!--        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayWith" (optionSelected)="handleSelection($event)">-->
+<!--          @for (address of result(); track address.properties?.id) {-->
+<!--            <mat-option [value]="address">-->
+<!--              <span>{{address.properties?.label}}</span>-->
+<!--              <br><small>{{address.properties?.context}}</small>-->
+<!--            </mat-option>-->
+<!--          }-->
+<!--        </mat-autocomplete>-->
+<!--      </mat-form-field>-->
+<!--    </div>-->
+<!--  </mgl-control>-->
 </mgl-map>
 

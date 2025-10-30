@@ -18,6 +18,7 @@
           "options": {
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
+            "polyfills": ["zone.js"],
             "assets": [
               {
                 "glob": "**/*",
@@ -26,6 +27,7 @@
             ],
             "styles": [
               "maplibre-gl/dist/maplibre-gl.css",
+              "@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css",
               "src/azure-blue-theme.scss",
               "src/styles.css"
             ]

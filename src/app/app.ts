@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, computed, effect, inject, signal} from '@angular/core';
 import {EventData, NgxMapLibreGLModule} from '@maplibre/ngx-maplibre-gl';
 import vectorStyle from './styles/vector.json';
-import {Map, MapGeoJSONFeature, MapMouseEvent, StyleSpecification} from 'maplibre-gl';
+import maplibregl, {Map, MapGeoJSONFeature, MapMouseEvent, StyleSpecification} from 'maplibre-gl';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatAutocompleteModule, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {MatInputModule} from '@angular/material/input';
@@ -11,6 +11,8 @@ import {toSignal} from '@angular/core/rxjs-interop';
 import {debounceTime, distinctUntilChanged, filter, switchMap} from 'rxjs';
 import {Address} from '@lib/geocode';
 import {MAT_SNACK_BAR_DATA, MatSnackBar} from '@angular/material/snack-bar';
+import MaplibreGeocoder from '@maplibre/maplibre-gl-geocoder';
+import {FrenchBanGeocoderApi} from './fr-ban-geocoder.api';
 
 const zoomLevel = {
   street: 16,
@@ -26,11 +28,11 @@ const zoomLevel = {
   templateUrl: './app.html',
   host: {
     class: 'w-full h-full block relative'
-  }
+  },
 })
 export class App {
   private readonly searchAddress = inject(SearchAddress);
-  readonly snackbar = inject(MatSnackBar);
+  private readonly snackbar = inject(MatSnackBar);
 
   readonly mapStyle = vectorStyle as StyleSpecification;
   readonly query = new FormControl<string>('', {nonNullable: true});
@@ -46,7 +48,7 @@ export class App {
 
   readonly placeholder = signal('Rechercher une adresse...')
 
-  map: Map | undefined;
+  readonly map = signal<Map | null>(null)
 
   readonly cursor = signal('default')
   readonly hoveredInfo = signal<{ longitude: number, latitude: number, feature: any } | null>(null)
@@ -54,7 +56,7 @@ export class App {
 
   readonly displayPopup = computed(() => {
     if (this.hoveredInfo()) {
-      const { id } = this.selectedParcelle() || {};
+      const {id} = this.selectedParcelle() || {};
       return id !== this.hoveredInfo()?.feature.properties.id
     }
     return false
@@ -62,9 +64,15 @@ export class App {
 
   constructor() {
     effect(() => {
-      const { id } = this.selectedParcelle() || {};
-      this.map?.setFilter('parcelle-highlighted', ['==', 'id', id || ''])
+      const {id} = this.selectedParcelle() || {};
+      this.map()?.setFilter('parcelle-highlighted', ['==', 'id', id || ''])
     });
+    effect(() => {
+      this.map()?.addControl(new MaplibreGeocoder(FrenchBanGeocoderApi, {
+        showResultsWhileTyping: true,
+        maplibregl
+      }), 'top-left')
+    })
   }
 
   protected displayWith(address: Address): string {
@@ -75,8 +83,8 @@ export class App {
     const address = event.option.value as Address;
     console.log({address})
     this.placeholder.set(address.properties?.label ?? '')
-    this.map?.setCenter((address.geometry?.coordinates ?? [2.213749, 46.227638]) as [number, number])
-    this.map?.setZoom(zoomLevel[address.properties?.type ?? 'municipality'])
+    this.map()?.setCenter((address.geometry?.coordinates ?? [2.213749, 46.227638]) as [number, number])
+    this.map()?.setZoom(zoomLevel[address.properties?.type ?? 'municipality'])
     this.query.setValue('')
     this.selectedParcelle.set(null)
   }
@@ -96,18 +104,18 @@ export class App {
     }
     this.hoveredInfo.set(hoverInfo)
 
-    this.map?.setFilter('parcelle-highlighted', ['==', 'id', (event as any).features?.[0]?.properties?.id ?? ''])
+    this.map()?.setFilter('parcelle-highlighted', ['==', 'id', (event as any).features?.[0]?.properties?.id ?? ''])
   }
 
   protected onLeave() {
     this.cursor.set('default')
-    this.map?.setFilter('parcelle-highlighted', ['==', 'id', ''])
+    this.map()?.setFilter('parcelle-highlighted', ['==', 'id', ''])
   }
 
   protected handleSelectParcelle(event: MapMouseEvent & { features?: MapGeoJSONFeature[] } & EventData) {
     event.originalEvent.stopPropagation()
     const feature = event["features"]?.[0];
-    const { id } = this.selectedParcelle() || {};
+    const {id} = this.selectedParcelle() || {};
     if (feature && id !== feature.properties["id"]) {
       this.selectedParcelle.set({...feature.properties})
       this.snackbar.openFromComponent(SelectedParcelDetails, {
@@ -127,15 +135,15 @@ export class App {
     <div>
       <div>
         <b>Parcelle </b>
-        <span>{{selectedParcelle?.numero}}</span>
+        <span>{{ selectedParcelle?.numero }}</span>
       </div>
       <div>
         <b>Longitude </b>
-        <span>{{selectedParcelle?.lng}}</span>
+        <span>{{ selectedParcelle?.lng }}</span>
       </div>
       <div>
         <b>Latitude </b>
-        <span>{{selectedParcelle?.lat}}</span>
+        <span>{{ selectedParcelle?.lat }}</span>
       </div>
     </div>
   `,
