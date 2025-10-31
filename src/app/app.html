@@ -1,1 +1,30 @@
-<router-outlet/>
+<mat-sidenav-container class="h-full">
+  <mat-sidenav-content class="!flex flex-col">
+    <mat-toolbar color="primary" class="shrink-0">
+      <span>Cadastre FR + MapLibre GL</span>
+      <div class="flex-1"></div>
+      <button
+        matButton
+        routerLink="/custom"
+        [routerLinkActiveOptions]="{exact: true}"
+        routerLinkActive="active"
+      >
+        <mat-icon>explore</mat-icon>
+        <mat-label>Personnaliser</mat-label>
+      </button>
+      <button
+        matButton
+        routerLink="/geocoder"
+        [routerLinkActiveOptions]="{exact: true}"
+        routerLinkActive="mat-tonal-button"
+      >
+        <mat-icon>map</mat-icon>
+        <mat-label>Intégrer</mat-label>
+      </button>
+    </mat-toolbar>
+
+    <main class="content grow overflow-hidden overflow-y-auto min-[500px]:" cdkScrollable>
+      <router-outlet/>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

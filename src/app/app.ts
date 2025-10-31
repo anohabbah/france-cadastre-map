@@ -4,12 +4,34 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatInputModule} from '@angular/material/input';
 import {ReactiveFormsModule} from '@angular/forms';
-import {RouterOutlet} from '@angular/router';
+import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
+import {MatIcon} from '@angular/material/icon';
+import {MatButton} from '@angular/material/button';
+import {MatSidenavContainer, MatSidenavContent} from '@angular/material/sidenav';
+import {MatToolbar} from '@angular/material/toolbar';
 
 @Component({
   selector: 'cdst-root',
-  imports: [NgxMapLibreGLModule, MatFormFieldModule, MatAutocompleteModule, MatInputModule, ReactiveFormsModule, RouterOutlet],
+  imports: [
+    NgxMapLibreGLModule,
+    MatFormFieldModule,
+    MatAutocompleteModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    RouterOutlet,
+    MatIcon,
+    MatSidenavContainer,
+    MatSidenavContent,
+    MatToolbar,
+    RouterLink,
+    MatButton,
+    RouterLinkActive,
+  ],
   templateUrl: './app.html',
+  styles: `
+    .active {
+    }
+  `,
   host: {
     class: 'w-full h-full block relative'
   },
