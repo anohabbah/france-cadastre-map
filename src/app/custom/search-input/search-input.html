@@ -29,15 +29,16 @@
 </div>
 <div class="right w-1/2 h-full relative shrink-0">
   <mgl-map
+    class="absolute inset-0"
     [style]="mapStyle()"
     [center]="center()"
     [zoom]="[zoom()]"
-    [canvasContextAttributes]="{preserveDrawingBuffer:true}"
-    class="absolute inset-0"
+    [canvasContextAttributes]="{preserveDrawingBuffer:false}"
+    (mapLoad)="map.set($event)"
+    (mapClick)="handleSelectParcelle($event)"
   >
-    <!-- Map Controls -->
     <mgl-control mglNavigation position="top-right" [showCompass]="false"/>
-    <mgl-control mglGeolocate position="top-right"></mgl-control>
+    <mgl-control mglGeolocate position="top-right" />
 
     <!-- User Location Marker -->
     @if (userLocation()) {
@@ -45,5 +46,15 @@
         <div class="w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-lg"></div>
       </mgl-marker>
     }
+
+    <mgl-layer
+      id="parcelles-fill"
+      type="fill"
+      source="cadastre"
+      (layerMouseEnter)="cursor.set('pointer')"
+      (layerMouseMove)="onHover($event)"
+      (layerMouseLeave)="onLeave()"
+      (layerClick)="handleSelectParcelle($event)"
+    />
   </mgl-map>
 </div>

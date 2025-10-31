@@ -3,8 +3,8 @@
   [style]="mapStyle"
   [zoom]="[5]"
   [center]="[2.213749, 46.227638]"
-  [canvasContextAttributes]="{preserveDrawingBuffer: false}"
   [cursorStyle]="cursor()"
+  [canvasContextAttributes]="{preserveDrawingBuffer: false}"
   (mapLoad)="map.set($event)"
   (mapClick)="handleSelectParcelle($event)"
 >

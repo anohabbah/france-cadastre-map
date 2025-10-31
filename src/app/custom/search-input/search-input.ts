@@ -8,8 +8,8 @@ import vector from '../../styles/vector.json';
 import {Location, MapService} from '../../geocoder/map.service';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatIconModule} from '@angular/material/icon';
-import {NgxMapLibreGLModule} from '@maplibre/ngx-maplibre-gl';
-import {StyleSpecification} from 'maplibre-gl';
+import {EventData, NgxMapLibreGLModule} from '@maplibre/ngx-maplibre-gl';
+import {Map, MapGeoJSONFeature, MapMouseEvent, StyleSpecification} from 'maplibre-gl';
 
 const FRANCE_CENTER: [number, number] = [2.2137, 46.2276]; // Center of France
 const DEFAULT_ZOOM = 5;
@@ -44,6 +44,10 @@ export class SearchInput {
   readonly center = signal<[number, number]>(FRANCE_CENTER);
   readonly zoom = signal(DEFAULT_ZOOM);
   readonly userLocation = signal<[number, number] | null>(null);
+  readonly cursor = signal('default');
+  readonly hoveredInfo = signal<{ longitude: number, latitude: number, feature: any } | null>(null)
+  readonly map = signal<Map | null>(null)
+  readonly selectedParcelle = signal<any>(null)
 
   constructor() {
     this.setupSearch();
@@ -78,11 +82,45 @@ export class SearchInput {
 
   onSelectLocation(location: Location): void {
     this.center.set([location.coordinates[0], location.coordinates[1]]);
-    this.zoom.set(14);
+    this.zoom.set(17);
   }
 
   displayFn(location: Location): string {
     return location?.label || '';
+  }
+
+  protected handleSelectParcelle(event: MapMouseEvent & EventData) {
+    event.originalEvent.stopPropagation()
+    const feature = event["features"]?.[0];
+    const {id} = this.selectedParcelle() || {};
+    if (feature && id !== feature.properties["id"]) {
+      this.selectedParcelle.set({...feature.properties})
+    } else {
+      this.selectedParcelle.set(null)
+    }
+  }
+
+  protected onHover(event: MapMouseEvent & { features?: MapGeoJSONFeature[] } & EventData) {
+    event.originalEvent.stopPropagation();
+    const feature = event.features?.[0]
+    const longitude = event.lngLat.lng
+    const latitude = event.lngLat.lat
+    let hoverInfo = null
+    if (feature) {
+      hoverInfo = {
+        longitude,
+        latitude,
+        feature
+      }
+    }
+    this.hoveredInfo.set(hoverInfo)
+
+    this.map()?.setFilter('parcelle-highlighted', ['==', 'id', (event as any).features?.[0]?.properties?.id ?? ''])
+  }
+
+  protected onLeave() {
+    this.cursor.set('default')
+    this.map()?.setFilter('parcelle-highlighted', ['==', 'id', ''])
   }
 }
 

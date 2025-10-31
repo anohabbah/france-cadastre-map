@@ -1,13 +1,16 @@
 <mat-sidenav-container class="h-full">
   <mat-sidenav-content class="!flex flex-col">
     <mat-toolbar color="primary" class="shrink-0">
-      <span>Cadastre FR + MapLibre GL</span>
+      <div>
+        <div>Cadastre FR + MapLibre GL</div>
+        <div class="text-xs font-sans align-baseline">Develop with love by Abbah</div>
+      </div>
       <div class="flex-1"></div>
       <button
         matButton
         routerLink="/custom"
         [routerLinkActiveOptions]="{exact: true}"
-        routerLinkActive="active"
+        routerLinkActive="mat-tonal-button"
       >
         <mat-icon>explore</mat-icon>
         <mat-label>Personnaliser</mat-label>
