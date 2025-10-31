@@ -1,29 +1,49 @@
 <mat-sidenav-container class="h-full">
   <mat-sidenav-content class="!flex flex-col">
     <mat-toolbar color="primary" class="shrink-0">
-      <div>
+      <div class="overflow-hidden">
         <div>Cadastre FR + MapLibre GL</div>
         <div class="text-xs font-sans align-baseline">Develop with love by Abbah</div>
       </div>
       <div class="flex-1"></div>
-      <button
-        matButton
-        routerLink="/custom"
-        [routerLinkActiveOptions]="{exact: true}"
-        routerLinkActive="mat-tonal-button"
-      >
-        <mat-icon>explore</mat-icon>
-        <mat-label>Personnaliser</mat-label>
-      </button>
-      <button
-        matButton
-        routerLink="/geocoder"
-        [routerLinkActiveOptions]="{exact: true}"
-        routerLinkActive="mat-tonal-button"
-      >
-        <mat-icon>map</mat-icon>
-        <mat-label>Intégrer</mat-label>
-      </button>
+      <div class="shrink-0 flex gap-2">
+        <button
+          matButton
+          class="!hidden sm:!inline-flex"
+          routerLink="/custom"
+          [routerLinkActiveOptions]="{exact: true}"
+          routerLinkActive="mat-tonal-button"
+        >
+          <mat-icon>explore</mat-icon>
+          <mat-label>Personnalisée</mat-label>
+        </button>
+        <button
+          matButton
+          class="!hidden sm:!inline-flex"
+          routerLink="/geocoder"
+          [routerLinkActiveOptions]="{exact: true}"
+          routerLinkActive="mat-tonal-button"
+        >
+          <mat-icon>map</mat-icon>
+          <mat-label>Intégrée</mat-label>
+        </button>
+        <button
+          matIconButton
+          class="sm:hidden"
+          title="Personnalisée"
+          routerLink="/custom"
+        >
+          <mat-icon>explore</mat-icon>
+        </button>
+        <button
+          matIconButton
+          class="sm:hidden"
+          title="Intégrée"
+          routerLink="/geocoder"
+        >
+          <mat-icon>map</mat-icon>
+        </button>
+      </div>
     </mat-toolbar>
 
     <main class="content grow overflow-hidden overflow-y-auto min-[500px]:" cdkScrollable>

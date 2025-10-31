@@ -1,5 +1,5 @@
-<div class="left w-1/2 h-full flex items-center justify-center shrink-0">
-  <mat-form-field appearance="outline" class="w-[300px]">
+<div class="left w-full sm:w-1/2 sm:h-full flex items-center justify-center shrink-0">
+  <mat-form-field appearance="outline" [subscriptSizing]="'dynamic'" class="w-full p-2 sm:p-0 sm:w-[300px]">
     <mat-label>Search for an address, place, or coordinates</mat-label>
     <input
       matInput
@@ -27,7 +27,7 @@
   </mat-form-field>
 
 </div>
-<div class="right w-1/2 h-full relative shrink-0">
+<div class="right w-full sm:w-1/2 h-screen sm:h-full relative">
   <mgl-map
     class="absolute inset-0"
     [style]="mapStyle()"

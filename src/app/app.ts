@@ -6,7 +6,7 @@ import {MatInputModule} from '@angular/material/input';
 import {ReactiveFormsModule} from '@angular/forms';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {MatIcon} from '@angular/material/icon';
-import {MatButton} from '@angular/material/button';
+import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatSidenavContainer, MatSidenavContent} from '@angular/material/sidenav';
 import {MatToolbar} from '@angular/material/toolbar';
 
@@ -26,6 +26,7 @@ import {MatToolbar} from '@angular/material/toolbar';
     RouterLink,
     MatButton,
     RouterLinkActive,
+    MatIconButton,
   ],
   templateUrl: './app.html',
   styles: `

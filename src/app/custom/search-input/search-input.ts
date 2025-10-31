@@ -16,10 +16,11 @@ const DEFAULT_ZOOM = 5;
 const MAP_STYLE = vector as StyleSpecification;
 
 @Component({
+  selector: 'app-custom-search-input-page',
   templateUrl: './search-input.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'flex block h-full',
+    class: 'flex flex-col sm:flex-row h-full overflow-y-auto',
   },
   imports: [
     MatFormFieldModule,
