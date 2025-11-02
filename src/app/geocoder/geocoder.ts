@@ -54,6 +54,7 @@ export class Geocoder {
     effect(() => {
       this.map()?.addControl(new MaplibreGeocoder(FrenchBanGeocoderApi, {
         showResultsWhileTyping: true,
+        minLength: 4,
         placeholder: 'Enter an address or coordinates',
         render: item => `
         <div>

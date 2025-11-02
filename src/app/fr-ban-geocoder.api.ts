@@ -7,11 +7,6 @@ import {ofetch} from 'ofetch';
 
 export const FrenchBanGeocoderApi: MaplibreGeocoderApi = {
   async forwardGeocode(config: MaplibreGeocoderApiConfig): Promise<MaplibreGeocoderFeatureResults> {
-    if ((config.query || '').toString().trim().length < 3) return {
-      type: 'FeatureCollection',
-      features: []
-    };
-
     return ofetch(`https://data.geopf.fr/geocodage/search?q=${config.query}`)
       .then(res => {
         return ({
