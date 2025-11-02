@@ -1,53 +1,53 @@
-<mgl-map
-  class="w-full h-full"
-  [style]="mapStyle"
-  [zoom]="[6]"
-  [center]="[2.213749, 46.227638]"
-  [canvasContextAttributes]="{preserveDrawingBuffer: false}"
-  [cursorStyle]="cursor()"
-  (mapLoad)="map.set($event)"
-  (mapClick)="handleSelectParcelle($event)"
->
-  <mgl-control mglNavigation [showCompass]="false" />
-  <mgl-control mglGeolocate />
-
-  @if (displayPopup()) {
-    <mgl-popup
-      [lngLat]="[hoveredInfo()!.longitude, hoveredInfo()!.latitude]"
-    >
-      <div class="text-sm">
-        <div>
-          <span class="font-bold">Parcelle</span>
-          <span>&nbsp;{{hoveredInfo()?.feature.properties?.numero}}</span>
-        </div>
+<mat-sidenav-container class="h-full">
+  <mat-sidenav-content class="!flex flex-col">
+    <mat-toolbar color="primary" class="shrink-0">
+      <div class="overflow-hidden">
+        <div>Cadastre FR + MapLibre GL</div>
+        <div class="text-xs font-sans align-baseline">Develop with love by Abbah</div>
       </div>
-    </mgl-popup>
-  }
+      <div class="flex-1"></div>
+      <div class="shrink-0 flex gap-2">
+        <button
+          matButton
+          class="!hidden sm:!inline-flex"
+          routerLink="/custom"
+          [routerLinkActiveOptions]="{exact: true}"
+          routerLinkActive="mat-tonal-button"
+        >
+          <mat-icon>explore</mat-icon>
+          <mat-label>Personnalisée</mat-label>
+        </button>
+        <button
+          matButton
+          class="!hidden sm:!inline-flex"
+          routerLink="/geocoder"
+          [routerLinkActiveOptions]="{exact: true}"
+          routerLinkActive="mat-tonal-button"
+        >
+          <mat-icon>map</mat-icon>
+          <mat-label>Intégrée</mat-label>
+        </button>
+        <button
+          matIconButton
+          class="sm:!hidden"
+          title="Personnalisée"
+          routerLink="/custom"
+        >
+          <mat-icon>explore</mat-icon>
+        </button>
+        <button
+          matIconButton
+          class="sm:!hidden"
+          title="Intégrée"
+          routerLink="/geocoder"
+        >
+          <mat-icon>map</mat-icon>
+        </button>
+      </div>
+    </mat-toolbar>
 
-  <mgl-layer
-    id="parcelles-fill"
-    type="fill"
-    source="cadastre"
-    (layerMouseEnter)="cursor.set('pointer')"
-    (layerMouseMove)="onHover($event)"
-    (layerMouseLeave)="onLeave()"
-    (layerClick)="handleSelectParcelle($event)"
-  />
-
-<!--  <mgl-control position="top-left">-->
-<!--    <div class="search-input bg-[var(&#45;&#45;mat-sys-surface-container)] rounded shadow w-sm">-->
-<!--      <mat-form-field class="w-full"  [appearance]="'outline'" [subscriptSizing]="'dynamic'">-->
-<!--        <input type="text" [placeholder]="placeholder()" matInput [formControl]="query" [matAutocomplete]="auto" />-->
-<!--        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayWith" (optionSelected)="handleSelection($event)">-->
-<!--          @for (address of result(); track address.properties?.id) {-->
-<!--            <mat-option [value]="address">-->
-<!--              <span>{{address.properties?.label}}</span>-->
-<!--              <br><small>{{address.properties?.context}}</small>-->
-<!--            </mat-option>-->
-<!--          }-->
-<!--        </mat-autocomplete>-->
-<!--      </mat-form-field>-->
-<!--    </div>-->
-<!--  </mgl-control>-->
-</mgl-map>
-
+    <main class="content grow overflow-hidden overflow-y-auto min-[500px]:" cdkScrollable>
+      <router-outlet/>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

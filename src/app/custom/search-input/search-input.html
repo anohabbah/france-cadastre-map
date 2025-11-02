@@ -1,0 +1,38 @@
+<div class="left w-full sm:w-1/2 sm:h-full shrink-0">
+  <div class="details-container mt-0 sm:mt-10 mx-4 pb-2">
+    <div class="search-input-container w-full " #inputContainer></div>
+
+    <div class="details"></div>
+  </div>
+</div>
+<div class="right w-full sm:w-1/2 h-screen sm:h-full relative">
+  <mgl-map
+    class="absolute inset-0"
+    [style]="mapStyle()"
+    [center]="center()"
+    [zoom]="[zoom()]"
+    [canvasContextAttributes]="{preserveDrawingBuffer:false}"
+    (mapLoad)="map.set($event)"
+    (mapClick)="handleSelectParcelle($event)"
+  >
+    <mgl-control mglNavigation position="top-right" [showCompass]="false"/>
+    <mgl-control mglGeolocate position="top-right" />
+
+    <!-- User Location Marker -->
+    @if (userLocation()) {
+      <mgl-marker [lngLat]="userLocation()!">
+        <div class="w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-lg"></div>
+      </mgl-marker>
+    }
+
+    <mgl-layer
+      id="parcelles-fill"
+      type="fill"
+      source="cadastre"
+      (layerMouseEnter)="cursor.set('pointer')"
+      (layerMouseMove)="onHover($event)"
+      (layerMouseLeave)="onLeave()"
+      (layerClick)="handleSelectParcelle($event)"
+    />
+  </mgl-map>
+</div>

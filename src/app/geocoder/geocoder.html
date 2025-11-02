@@ -1,0 +1,37 @@
+<mgl-map
+  class="w-full h-full"
+  [style]="mapStyle"
+  [zoom]="[5]"
+  [center]="[2.213749, 46.227638]"
+  [cursorStyle]="cursor()"
+  [canvasContextAttributes]="{preserveDrawingBuffer: false}"
+  (mapLoad)="map.set($event)"
+  (mapClick)="handleSelectParcelle($event)"
+>
+  <mgl-control mglNavigation [showCompass]="false" />
+  <mgl-control mglGeolocate />
+
+  @if (displayPopup()) {
+    <mgl-popup
+      [lngLat]="[hoveredInfo()!.longitude, hoveredInfo()!.latitude]"
+    >
+      <div class="text-sm">
+        <div>
+          <span class="font-bold">Parcelle</span>
+          <span>&nbsp;{{hoveredInfo()?.feature.properties?.numero}}</span>
+        </div>
+      </div>
+    </mgl-popup>
+  }
+
+  <mgl-layer
+    id="parcelles-fill"
+    type="fill"
+    source="cadastre"
+    (layerMouseEnter)="cursor.set('pointer')"
+    (layerMouseMove)="onHover($event)"
+    (layerMouseLeave)="onLeave()"
+    (layerClick)="handleSelectParcelle($event)"
+  />
+</mgl-map>
+
