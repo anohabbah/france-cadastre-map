@@ -1,31 +1,9 @@
-<div class="left w-full sm:w-1/2 sm:h-full flex items-center justify-center shrink-0">
-  <mat-form-field appearance="outline" [subscriptSizing]="'dynamic'" class="w-full p-2 sm:p-0 sm:w-[300px]">
-    <mat-label>Search for an address, place, or coordinates</mat-label>
-    <input
-      matInput
-      type="text"
-      [formControl]="searchControl"
-      [matAutocomplete]="auto"
-      placeholder="Enter an address or coordinates"
-    />
-    @if (isLoading()) {
-      <mat-spinner matSuffix diameter="20" class="mr-4"></mat-spinner>
-    } @else {
-      <mat-icon matSuffix>search</mat-icon>
-    }
+<div class="left w-full sm:w-1/2 sm:h-full shrink-0">
+  <div class="details-container mt-0 sm:mt-10 mx-4 pb-2">
+    <div class="search-input-container w-full " #inputContainer></div>
 
-    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-      @for (option of options(); track option.label) {
-        <mat-option [value]="option" (onSelectionChange)="onSelectLocation(option)">
-          <div class="flex flex-col">
-            <span class="font-medium">{{ option.label }}</span>
-            <span class="text-xs text-gray-500">{{ option.context }}</span>
-          </div>
-        </mat-option>
-      }
-    </mat-autocomplete>
-  </mat-form-field>
-
+    <div class="details"></div>
+  </div>
 </div>
 <div class="right w-full sm:w-1/2 h-screen sm:h-full relative">
   <mgl-map

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, ElementRef, inject, OnInit, signal, viewChild} from '@angular/core';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatInputModule} from '@angular/material/input';
@@ -9,7 +9,9 @@ import {Location, MapService} from '../../geocoder/map.service';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatIconModule} from '@angular/material/icon';
 import {EventData, NgxMapLibreGLModule} from '@maplibre/ngx-maplibre-gl';
-import {Map, MapGeoJSONFeature, MapMouseEvent, StyleSpecification} from 'maplibre-gl';
+import maplibregl, {Map, MapGeoJSONFeature, MapMouseEvent, StyleSpecification} from 'maplibre-gl';
+import MaplibreGeocoder from '@maplibre/maplibre-gl-geocoder';
+import {FrenchBanGeocoderApi} from '../../fr-ban-geocoder.api';
 
 const FRANCE_CENTER: [number, number] = [2.2137, 46.2276]; // Center of France
 const DEFAULT_ZOOM = 5;
@@ -32,7 +34,7 @@ const MAP_STYLE = vector as StyleSpecification;
     NgxMapLibreGLModule,
   ],
 })
-export class SearchInput {
+export class SearchInput implements OnInit {
   private readonly mapService = inject(MapService);
 
   readonly searchControl = new FormControl('');
@@ -50,8 +52,45 @@ export class SearchInput {
   readonly map = signal<Map | null>(null)
   readonly selectedParcelle = signal<any>(null)
 
+
+  // search inpt
+  readonly inputContainer = viewChild('inputContainer', {read: ElementRef})
+  geocoder: MaplibreGeocoder | null = null
+
   constructor() {
     this.setupSearch();
+
+    effect(() => {
+      const map = this.map()
+      if (map) {
+        const el = this.geocoder?.onAdd(map);
+        this.inputContainer()?.nativeElement.appendChild(el)
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    this.geocoder = new MaplibreGeocoder(FrenchBanGeocoderApi, {
+      showResultsWhileTyping: true,
+      minLength: 4,
+      placeholder: 'Enter an address or coordinates',
+      render: item => {
+        return (
+          '<div class="maplibregl-ctrl-geocoder--result">' +
+          '<svg class="maplibregl-ctrl-geocoder--result-icon" viewBox="0 0 24 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.36571 0 0 5.38676 0 12.0471C0 21.0824 12 32 12 32C12 32 24 21.0824 24 12.0471C24 5.38676 18.6343 0 12 0ZM12 16.3496C9.63428 16.3496 7.71429 14.4221 7.71429 12.0471C7.71429 9.67207 9.63428 7.74454 12 7.74454C14.3657 7.74454 16.2857 9.67207 16.2857 12.0471C16.2857 14.4221 14.3657 16.3496 12 16.3496Z" fill="#687078"/></svg>' +
+          "<div>" +
+          '<div class="maplibregl-ctrl-geocoder--result-title">' +
+          item.place_name +
+          "</div>" +
+          '<div class="maplibregl-ctrl-geocoder--result-address">' +
+          item.text +
+          "</div>" +
+          "</div>" +
+          "</div>"
+        );
+      },
+      maplibregl
+    })
   }
 
   private setupSearch(): void {
@@ -79,15 +118,6 @@ export class SearchInput {
       return of([]);
     }
     return this.mapService.searchAddress(query);
-  }
-
-  onSelectLocation(location: Location): void {
-    this.center.set([location.coordinates[0], location.coordinates[1]]);
-    this.zoom.set(17);
-  }
-
-  displayFn(location: Location): string {
-    return location?.label || '';
   }
 
   protected handleSelectParcelle(event: MapMouseEvent & EventData) {
